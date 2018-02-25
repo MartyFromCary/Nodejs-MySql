@@ -1,0 +1,25 @@
+{
+  "name": "Nodejs-MySql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MartyFromCary/Nodejs-MySql.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MartyFromCary/Nodejs-MySql/issues"
+  },
+  "homepage": "https://github.com/MartyFromCary/Nodejs-MySql#readme",
+  "dependencies": {
+    "inquirer": "^5.1.0",
+    "mysql": "^2.15.0"
+  },
+  "devDependencies": {}
+}

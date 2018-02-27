@@ -26,9 +26,6 @@ function askGoOn() {
 }
 
 function purchaseItem(item_id, product_name, price, quantity, stock_quantity) {
-  console.log(
-    `${item_id}, ${product_name}, ${price}, ${quantity}, ${stock_quantity}`
-  );
   conn.query(
     "UPDATE products SET ? WHERE ?",
     [{ stock_quantity: stock_quantity - quantity }, { item_id }],
@@ -90,7 +87,7 @@ function askItem(department_name) {
               ",  $" +
               formatPrice(tuple.price)
           ),
-          message: `Witch item from the ${department_name} Department would you like to order?`
+          message: `Which item from the ${department_name} Department would you like to order?`
         }
       ]).then(({ item_name }) => {
         let tmpArr = item_name.split(",").map(S => S.trim());

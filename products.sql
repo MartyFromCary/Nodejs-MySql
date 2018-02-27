@@ -5,7 +5,7 @@ CREATE TABLE products (
     item_id INTEGER NOT NULL UNIQUE,
     product_name VARCHAR(50) NOT NULL,
     department_name VARCHAR(30) NOT NULL,
-    price FLOAT NOT NULL,
+    price FLOAT(8,2) NOT NULL,
     stock_quantity INTEGER NOT NULL,
     PRIMARY KEY (item_id)
     

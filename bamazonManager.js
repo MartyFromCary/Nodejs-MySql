@@ -35,22 +35,22 @@ const actionChoices = [
 ];
 
 function formatTupleToDisplay(tuple) {
-  let tupleDisplay = [];
+  let display = [];
   columnNames.forEach(name => {
     let column = tuple[name];
     if (name === "price") {
       column = "$" + formatPrice(column);
     }
-    tupleDisplay.push(column);
+    display.push(column);
   });
-  return tupleDisplay.join("|  ");
+  return display.join("|  ");
 }
 
 function formatDisplayToTuple(display) {
   let tuple = {};
-  let parts = display.split("|").map(S => S.trim());
+  let columns = display.split("|").map(S => S.trim());
   columnNames.forEach(name => {
-    let column = parts.shift();
+    let column = columns.shift();
     if (name === "price") {
       column = parseFloat(column.substr(1));
     }
@@ -66,21 +66,6 @@ function viewProducts(queryType) {
     res.forEach(tuple => console.log(formatTupleToDisplay(tuple)));
     askWhatDoYouWant();
   });
-}
-
-function updateStock_quantity(item_id, stock_quantity, add_quantity) {
-  console.log(item_id, stock_quantity, add_quantity);
-  conn.query(
-    "UPDATE products SET ? WHERE ?",
-    [
-      { stock_quantity: parseInt(stock_quantity) + parseInt(add_quantity) },
-      { item_id }
-    ],
-    (err, res) => {
-      if (err) throw err;
-      askWhatDoYouWant();
-    }
-  );
 }
 
 function addToInventory() {
@@ -101,8 +86,38 @@ function addToInventory() {
         message: "What is the change of stock quantity?"
       }
     ]).then(({ display, add_quantity }) => {
-      let T = formatDisplayToTuple(display);
-      updateStock_quantity(T.item_id, T.stock_quantity, add_quantity);
+      let choice = formatDisplayToTuple(display);
+      conn.query(
+        "UPDATE products SET ? WHERE ?",
+        [
+          {
+            stock_quantity:
+              parseInt(choice.stock_quantity) + parseInt(add_quantity)
+          },
+          { item_id: choice.item_id }
+        ],
+        (err, res) => {
+          if (err) throw err;
+          askWhatDoYouWant();
+        }
+      );
+    });
+  });
+}
+
+function addNewProduct() {
+  let promptList = [];
+  columnNames.forEach(name =>
+    promptList.push({
+      name,
+      type: "input",
+      message: "Please enter the " + name.replace(/_/i, " ")
+    })
+  );
+  prompt(promptList).then(insertTuple => {
+    conn.query("INSERT INTO products SET ?", insertTuple, function(err) {
+      if (err) throw err;
+      askWhatDoYouWant();
     });
   });
 }
@@ -116,7 +131,6 @@ function askWhatDoYouWant() {
       message: "What do you want to do?"
     }
   ]).then(({ choice }) => {
-    console.log(choice);
     switch (choice) {
       case viewProductsForSaleTXT:
         return viewProducts(queryAll);
@@ -125,7 +139,7 @@ function askWhatDoYouWant() {
       case addToInventoryTXT:
         return addToInventory();
       case addNewProductTXT:
-        return;
+        return addNewProduct();
       case wantToQuitTXT:
         return conn.end();
     }
